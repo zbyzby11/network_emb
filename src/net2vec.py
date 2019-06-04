@@ -35,7 +35,7 @@ class Net2vec(object):
         # 可能是梯度爆炸了，调小学习率，减小batch size，看看效果先！
         self.initial_lr = config["lr"]
         self.batch_size = config["batch_size"]
-
+        self.negative_num = config['negative_num']
         # 由于学习率调小了，迭代次数就要相应增加一点，不然模型可能没拟合
         self.train_times = config["train_times"]
 
@@ -60,7 +60,7 @@ class Net2vec(object):
 
         return p_app,p_entity
 
-    def neg_sampling(self, p_app, p_entity, num):
+    def neg_sampling(self, p_app, p_entity):
         """
         负采样
         :param p_app:正例的appid
@@ -70,28 +70,28 @@ class Net2vec(object):
         """
         neg_app = []
         neg_entity = []
-
-        for i in range(len(p_app)):
-            p_appid = p_app[i]
-            p_entityid = p_entity[i]
-            while True:
-                is_head = random.randint(0, 1)
-                if is_head:
-                    e = random.randint(0, self.app_count - 1)
-                    if (e, p_entityid) in self.app_entity_pairs_set:
-                        continue
+        for num in range(self.negative_num):
+            for i in range(len(p_app)):
+                p_appid = p_app[i]
+                p_entityid = p_entity[i]
+                while True:
+                    is_head = random.randint(0, 1)
+                    if is_head:
+                        e = random.randint(0, self.app_count - 1)
+                        if (e, p_entityid) in self.app_entity_pairs_set:
+                            continue
+                        else:
+                            neg_app.append(e)
+                            neg_entity.append(p_entityid)
+                            break
                     else:
-                        neg_app.append(e)
-                        neg_entity.append(p_entityid)
-                        break
-                else:
-                    e = random.randint(0, self.entity_count - 1)
-                    if (p_appid, e) in self.app_entity_pairs_set:
-                        continue
-                    else:
-                        neg_app.append(p_appid)
-                        neg_entity.append(e)
-                        break
+                        e = random.randint(0, self.entity_count - 1)
+                        if (p_appid, e) in self.app_entity_pairs_set:
+                            continue
+                        else:
+                            neg_app.append(p_appid)
+                            neg_entity.append(e)
+                            break
 
         return neg_app, neg_entity
 
@@ -109,7 +109,7 @@ class Net2vec(object):
             flag = True
             for i in process_bar:
                 pos_appid, pos_entityid = self.get_pos_pairs(i)
-                neg_appid, neg_entityid = self.neg_sampling(pos_appid, pos_entityid,num=1)
+                neg_appid, neg_entityid = self.neg_sampling(pos_appid, pos_entityid)
                 pos_appid = t.LongTensor(pos_appid).cuda()
                 pos_entityid = t.LongTensor(pos_entityid).cuda()
                 neg_appid = t.LongTensor(neg_appid).cuda()
