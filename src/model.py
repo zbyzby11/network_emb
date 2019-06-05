@@ -84,7 +84,7 @@ class LINE(nn.Module):
         #实体id的embedding矩阵
         for index, emb in enumerate(entity_emb):
             entity_emb_dict[index] = emb
-        entity_f = open(file_dir + 'entity_emb.txt','w',encoding='utf8')
+        entity_f = open(file_dir + 'entity_emb.json','w',encoding='utf8')
         entity_f.write(json.dumps(entity_emb_dict,ensure_ascii=False))
         entity_f.close()
 
