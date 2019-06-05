@@ -69,17 +69,23 @@ class LINE(nn.Module):
         :return: 两个文件，每个文件为字典格式，一个是保存案件id embedding的文件字典，
                 一个是保存entityid embedding的文件字典
         """
+        app_emb_dict = dict()
+        entity_emb_dict = dict()
         app_emb = self.app_emb.weight.data.detach().cpu().numpy().tolist()
         entity_emb = self.entity_emb.weight.data.detach().cpu().tolist()
 
         #appid的embedding矩阵
-        app_f = open(file_dir + 'app_emb.txt','w',encoding='utf8')
-        app_f.write(json.dumps(app_emb,ensure_ascii=False))
+        for index, emb in enumerate(app_emb):
+            app_emb_dict[index] = emb
+        app_f = open(file_dir + 'app_emb.json','w',encoding='utf8')
+        app_f.write(json.dumps(app_emb_dict,ensure_ascii=False))
         app_f.close()
 
         #实体id的embedding矩阵
+        for index, emb in enumerate(entity_emb):
+            entity_emb_dict[index] = emb
         entity_f = open(file_dir + 'entity_emb.txt','w',encoding='utf8')
-        entity_f.write(json.dumps(entity_emb,ensure_ascii=False))
+        entity_f.write(json.dumps(entity_emb_dict,ensure_ascii=False))
         entity_f.close()
 
         #todo:对于新的案件，需要先找出与其关联的实体的embedding，并求平均，
