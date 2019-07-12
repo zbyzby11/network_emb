@@ -9,5 +9,5 @@ if __name__ == '__main__':
     app_count = len(list(app2id_dict.keys()))
     entity_count = len(list(entity2id_dict.keys()))
 
-    w2v = Net2vec(app_entity_pairs, app_count, entity_count)
+    w2v = Net2vec(app_entity_pairs, appid2entityids, app_count, entity_count)
     w2v.train()

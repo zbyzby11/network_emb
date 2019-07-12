@@ -17,7 +17,7 @@ from model import LINE
 
 
 class Net2vec(object):
-    def __init__(self, app_entity_pairs, app_count, entity_count):
+    def __init__(self, app_entity_pairs, appid2entityids, app_count, entity_count):
         """
         初始化整个网络
         :param app_entity_pairs:app,entity对
@@ -28,6 +28,7 @@ class Net2vec(object):
         self.device = t.device("cuda:0,1")
         self.app_entity_pairs = app_entity_pairs
         self.app_entity_pairs_set = set(app_entity_pairs)
+        self.appid2entityids = appid2entityids
         self.app_count = app_count
         self.entity_count = entity_count
         self.emb_dimension = config["embedding_dim"]
@@ -40,7 +41,7 @@ class Net2vec(object):
         self.train_times = config["train_times"]
 
         self.num_batch = len(self.app_entity_pairs) // self.batch_size + 1
-        self.model = LINE(self.app_count, self.entity_count, self.emb_dimension).cuda()
+        self.model = LINE(self.appid2entityids, self.app_count, self.entity_count, self.emb_dimension).cuda()
         self.optimizer = optim.SGD(self.model.parameters(), lr=self.initial_lr)
 
     def get_pos_pairs(self, idx):
@@ -58,7 +59,7 @@ class Net2vec(object):
             p_app.append(appid)
             p_entity.append(entityid)
 
-        return p_app,p_entity
+        return p_app, p_entity
 
     def neg_sampling(self, p_app, p_entity):
         """
@@ -129,7 +130,8 @@ class Net2vec(object):
                 # print('9 ' + current_time())
                 # print('-------------------------------')
 
-        self.model.save_para(self.save_dir)
+        self.model.save_para(t.cuda.is_available())
+
 
 if __name__ == '__main__':
     app_entity_pairs, appid2entityids, app2id_dict, entity2id_dict = get_existed_train_data()
@@ -138,5 +140,5 @@ if __name__ == '__main__':
     app_count = len(list(app2id_dict.keys()))
     entity_count = len(list(entity2id_dict.keys()))
 
-    w2v = Net2vec(app_entity_pairs, app_count, entity_count)
+    w2v = Net2vec(app_entity_pairs, appid2entityids, app_count, entity_count)
     w2v.train()
