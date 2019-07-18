@@ -11,7 +11,6 @@ import json
 import os
 
 from torch import optim
-
 from data_preprocess import get_existed_train_data
 from model import LINE
 
