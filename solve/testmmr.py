@@ -44,10 +44,10 @@ def feature_mmr(app_test_dict):
 
 
 def line_mmr(app):
-    app2id_dict = json.load(open(DATA_INPUT_DIR + 'app2id_dict.txt', 'r', encoding='utf8'))
+    app2id_dict = json.load(open(DATA_INPUT_DIR + 'app2id_dict.json', 'r', encoding='utf8'))
     if app2id_dict.get(app, None) == None:
         app_si_dict = predicate_new(app, 20)
-        test_review = json.load(open('../benchmark/similarset.json', 'r', encoding='utf8'))
+        test_review = json.load(open('../benchmark/similar.json', 'r', encoding='utf8'))
         benchmark_app_list = test_review[app]
         predicate_list = app_si_dict[app]
         mmr = 0
@@ -57,7 +57,7 @@ def line_mmr(app):
         print('{}的MMR为：{}'.format(app, mmr))
     else:
         app_si_dict = predicate_ex(app, 20)
-        test_review = json.load(open('../benchmark/similarset.json', 'r', encoding='utf8'))
+        test_review = json.load(open('../benchmark/similar.json', 'r', encoding='utf8'))
         benchmark_app_list = test_review[app]
         predicate_list = app_si_dict[app]
         mmr = 0
@@ -69,9 +69,9 @@ def line_mmr(app):
 
 if __name__ == '__main__':
     app_test_dict = json.load(open('../test/testapp.json', 'r', encoding='utf8'))
-    feature_mmr(app_test_dict)
-    # for i in app_test_dict:
-    #     line_mmr(i)
+    # feature_mmr(app_test_dict)
+    for i in app_test_dict:
+        line_mmr(i)
     # a = json.load(open('../temp/app3.json','r',encoding='utf8'))
     # l = []
     # for i, j in a.items():

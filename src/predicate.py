@@ -37,10 +37,10 @@ def predicate_new(appname, k):
     :param k: 预测前k个相似
     :return: app对应的相似app的列表组成的字典{appnaem:list}
     """
-    app_test_dict = json.load(open('../test/testset.json', 'r', encoding='utf8'))
+    app_test_dict = json.load(open('../test/testapp.json', 'r', encoding='utf8'))
     # print(app_test_dict[appname])
-    appid_dict = json.load(open(DATA_INPUT_DIR + 'app2id_dict.txt', 'r', encoding='utf8'))
-    entityid_dict = json.load(open(DATA_INPUT_DIR + 'entity2id_dict.txt', 'r', encoding='utf8'))
+    appid_dict = json.load(open(DATA_INPUT_DIR + 'app2id_dict.json', 'r', encoding='utf8'))
+    entityid_dict = json.load(open(DATA_INPUT_DIR + 'entity2id_dict.json', 'r', encoding='utf8'))
     app_avg_emb = json.load(open(RESULT_SAVE_DIR + 'appEmbeddingAverageEntity.txt', 'r', encoding='utf8'))
     entity_emb = json.load(open(RESULT_SAVE_DIR + 'entityEmbedding.txt', 'r', encoding='utf8'))
     app_emb = json.load(open(RESULT_SAVE_DIR + 'appEmbedding.txt', 'r', encoding='utf8'))
